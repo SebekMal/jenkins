@@ -4,18 +4,37 @@ pipeline {
     stages {
         stage('Configure venv'){
             steps{
-                echo 'Configuring venv...'
+                sh '''
+                python3 -m venv venv
+                source /venv/bin/activate
+                pip install -r requirements.txt
+                pip install .
+
+                '''
                 }
             }
 
         stage('Test venv'){
             steps{
-                echo 'Test venv...'
+                sh '''
+                source /venv/bin/activate
+                pytest
+
+                '''
                 }
             }
         stage('Build distribution file '){
             steps{
-                echo 'Configuring venv...'
+                sh '''
+                source /venv/bin/activate
+                python setup.py sdist
+
+                '''
+                }
+            }
+        stage('Clean '){
+            steps{
+                sh 'rm -rf venv'
                 }
             }
         }
